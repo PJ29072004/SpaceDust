@@ -9,7 +9,8 @@ var field = []
 var x = 0
 var y = 0
 var G = 50
-var sig = 1000
+var vin = 1000
+var foc = 50
 function resize(){
     C.width = window.innerWidth
     C.height = window.innerHeight
@@ -25,8 +26,8 @@ function resize(){
         for(var j=0;j<C.height/dx;j++){
             L.push(Math.random())
             var n = []
-            for(var k=0;k<6;k++){
-                n.push(Math.random())
+            for(var k=0;k<10;k++){
+                n.push((dx/20) * Math.random())
             }
             N.push(n)
         }
@@ -39,8 +40,8 @@ window.onresize = function(){
     move()
 }
 function Dot(x,y,col=0){
-    var t = Math.exp(-col/50)
-    var t2 = Math.exp(-col/sig)
+    var t = Math.exp(-col/foc)
+    var t2 = Math.exp(-col/vin)
     var cos = Math.cos(col/100)
     var sin = Math.sin(col/100)
     //yellow = [255,255,244]
@@ -59,7 +60,7 @@ function rDots(N=3000){
 }
 function Disturbance(){
     c.clearRect(0,0,C.width,C.height)
-    noiseState = (noiseState+2) % 6
+    noiseState = (noiseState+2) % 10
     for(var i = 0;i<noise.length;i+=1){
         for(var j=0;j<noise[0].length;j+=1){
             Dot(field[i][j][1] + noise[i][j][noiseState] + dx*texture[i][j],field[i][j][2] + noise[i][j][noiseState+1] + dx*texture[i][j],field[i][j][0]*(1+4*texture[i][j])/5)
@@ -89,10 +90,10 @@ document.addEventListener("touchmove",function(e){
     move()
 })
 document.addEventListener("pointerdown",function(){
-    G = 2*G 
-    sig = sig/2
-    var g = setInterval(function(){G=0.9*G+5;sig=0.9*sig+100;move()},100)
-    setTimeout(function(){clearInterval(g);G=50;sig=1000},2000)
+    vin = vin/5
+    foc = foc/5
+    var g = setInterval(function(){vin=0.95*vin+50;foc=0.95*foc+2.5;move()},100)
+    setTimeout(function(){clearInterval(g);sig=1000},2000)
 })
 resize()
 move()
