@@ -18,6 +18,7 @@ function resize(){
     C.width = window.innerWidth
     C.height = window.innerHeight
     texture=[]
+    noise=[]
     for(var i=0;i<C.width/dx;i++){
         var L = []
         var N = []
@@ -33,7 +34,10 @@ function resize(){
         noise.push(N)
     }
 }
-window.onresize = resize
+window.onresize = function(){
+    resize()
+    move()
+}
 resize()
 function Dot(x,y,col=0){
     c.fillStyle = `rgb(${255*Math.cos(col/100)},${255*Math.sin(col/100)},${col})`
@@ -50,19 +54,19 @@ function rDots(N=3000){
 }
 function Disturbance(){
     c.clearRect(0,0,C.width,C.height)
-    noiseState = (noiseState+1) % 6
-    for(var i = 0;i*dx<C.width;i+=1){
-        for(var j=0;j*dx<C.height;j+=1){
+    noiseState = (noiseState+2) % 6
+    for(var i = 0;i<noise.length;i+=1){
+        for(var j=0;j<noise[0].length;j+=1){
             //var R = Math.sqrt((x-i*dx)**2 + (y-j*dx)**2)
-            Dot(field[i][j][1] + noise[i][j][noiseState] + dx*texture[i][j],field[i][j][2] + noise[i][j][noiseState] + dx*texture[i][j],field[i][j][0]*(1+4*texture[i][j])/5)
+            Dot(field[i][j][1] + noise[i][j][noiseState] + dx*texture[i][j],field[i][j][2] + noise[i][j][noiseState+1] + dx*texture[i][j],field[i][j][0]*(1+4*texture[i][j])/5)
         }
     }
 }
 function move(){
     field = []
-    for(var i = 0;i*dx<C.width;i+=1){
+    for(var i = 0;i<noise.length;i+=1){
         L = []
-        for(var j=0;j*dx<C.height;j+=1){
+        for(var j=0;j<noise[0].length;j+=1){
             var R = Math.sqrt((x-i*dx)**2 + (y-j*dx)**2)
                 L.push([R,i*dx + G*(i*dx-x)/(1+R) ,j*dx+G*(j*dx-y)/(1+R)])
         }
@@ -81,4 +85,4 @@ document.addEventListener("touchmove",function(e){
     G = 3*e.touches[0].radiusX
     move()
 })
-setInterval(Disturbance,50)
+D = setInterval(Disturbance,50)
