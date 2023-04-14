@@ -9,6 +9,7 @@ var field = []
 var x = 0
 var y = 0
 var G = 50
+var sig = 1000
 function resize(){
     C.width = window.innerWidth
     C.height = window.innerHeight
@@ -38,7 +39,13 @@ window.onresize = function(){
     move()
 }
 function Dot(x,y,col=0){
-    c.fillStyle = `rgb(${255*Math.cos(col/100)},${255*Math.sin(col/100)},${col})`
+    var t = Math.exp(-col/50)
+    var t2 = Math.exp(-col/sig)
+    var cos = Math.cos(col/100)
+    var sin = Math.sin(col/100)
+    //yellow = [255,255,244]
+    //random = [100*cos(col),100*sin(col),255]
+    c.fillStyle = `rgb(${t2*(255*t+(1-t)*100*(1+cos))},${t2*(255*t+(1-t)*100*(1+sin))},${t2*(255-11*t)})`
     c.beginPath()
     c.arc(x,y,r,0,6.3)
     c.closePath()
@@ -80,6 +87,12 @@ document.addEventListener("touchmove",function(e){
     y = e.touches[0].clientY
     //G = 3*e.touches[0].radiusX
     move()
+})
+document.addEventListener("pointerdown",function(){
+    G = 2*G 
+    sig = sig/2
+    var g = setInterval(function(){G=0.9*G+5;sig=0.9*sig+100;move()},100)
+    setTimeout(function(){clearInterval(g);G=50;sig=1000},2000)
 })
 resize()
 move()
