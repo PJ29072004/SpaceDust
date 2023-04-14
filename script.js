@@ -1,22 +1,21 @@
-C = document.getElementById("C")
-c = C.getContext("2d")
-r = 2
-dx = 20
-if(navigator.userAgent.match(/Android/i)){
-    r = 5
-    dx = 50
-}
-noiseState = 0
-noise = []
-texture = []
-field = []
-tr = 1000
-x = 0
-y = 0
-G = 50
+const C = document.getElementById("C")
+const c = C.getContext("2d")
+var r = 2
+var dx = 20
+var noiseState = 0
+var noise = []
+var texture = []
+var field = []
+var x = 0
+var y = 0
+var G = 50
 function resize(){
     C.width = window.innerWidth
     C.height = window.innerHeight
+    if(navigator.userAgent.match(/Android/i)){
+        r = 5
+        dx = Math.max(C.width,C.height)/20
+    }
     texture=[]
     noise=[]
     for(var i=0;i<C.width/dx;i++){
@@ -38,7 +37,6 @@ window.onresize = function(){
     resize()
     move()
 }
-resize()
 function Dot(x,y,col=0){
     c.fillStyle = `rgb(${255*Math.cos(col/100)},${255*Math.sin(col/100)},${col})`
     c.beginPath()
@@ -57,7 +55,6 @@ function Disturbance(){
     noiseState = (noiseState+2) % 6
     for(var i = 0;i<noise.length;i+=1){
         for(var j=0;j<noise[0].length;j+=1){
-            //var R = Math.sqrt((x-i*dx)**2 + (y-j*dx)**2)
             Dot(field[i][j][1] + noise[i][j][noiseState] + dx*texture[i][j],field[i][j][2] + noise[i][j][noiseState+1] + dx*texture[i][j],field[i][j][0]*(1+4*texture[i][j])/5)
         }
     }
@@ -73,7 +70,6 @@ function move(){
         field.push(L)
     }
 }
-move()
 document.addEventListener("mousemove",function(e){
     x = e.clientX
     y = e.clientY
@@ -82,7 +78,10 @@ document.addEventListener("mousemove",function(e){
 document.addEventListener("touchmove",function(e){
     x = e.touches[0].clientX
     y = e.touches[0].clientY
-    G = 3*e.touches[0].radiusX
+    //G = 3*e.touches[0].radiusX
     move()
 })
+resize()
+move()
 D = setInterval(Disturbance,50)
+
