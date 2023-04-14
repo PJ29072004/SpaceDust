@@ -22,7 +22,7 @@ function resize(){
     for(var i=0;i<C.width/dx;i++){
         var L = []
         var N = []
-        for(var j=0;j<C.width/dx;j++){
+        for(var j=0;j<C.height/dx;j++){
             L.push(Math.random())
             var n = []
             for(var k=0;k<6;k++){
